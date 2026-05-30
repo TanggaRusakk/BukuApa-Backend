@@ -1,9 +1,8 @@
 import express from "express";
 import { authMiddleware } from "../middlewares/auth-middleware";
 import { BorrowingController } from "../controllers/borrowing-controller";
-import express from "express"
-import { authMiddleware } from "../middlewares/auth-middleware"
 import { BookController } from "../controllers/book-controller"
+import { ReviewController } from '../controllers/review-controller';
 
 export const privateRouter = express.Router();
 
@@ -18,3 +17,10 @@ privateRouter.post("/books", BookController.create)
 privateRouter.put("/books/:bookId", BookController.update)
 privateRouter.delete("/books/:bookId", BookController.delete)
 privateRouter.get("/books/:bookId", BookController.get)
+
+// Route Review (Buatanmu)
+privateRouter.post("/books/:bookId/reviews", ReviewController.create);
+privateRouter.get("/books/:bookId/reviews", ReviewController.getReviews);
+privateRouter.get("/books/:bookId/can-review", ReviewController.canReview);
+privateRouter.put("/reviews/:reviewId", ReviewController.update);
+privateRouter.delete("/reviews/:reviewId", ReviewController.delete);
