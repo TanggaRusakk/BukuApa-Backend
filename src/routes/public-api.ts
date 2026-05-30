@@ -14,4 +14,4 @@ publicRouter.get("/books", CatalogController.search);
 
 // Route Review (Buatanmu)
 publicRouter.post("/books/:bookId/reviews", ReviewController.create);
-publicRouter.get("/books/:bookId/reviews", ReviewController.get);
+publicRouter.get("/books/:bookId/reviews", ReviewController.getReviews);
