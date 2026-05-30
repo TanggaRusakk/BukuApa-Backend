@@ -2,6 +2,7 @@ import express from "express";
 import { UserController } from "../controllers/user-controller"; 
 import { CatalogController } from "../controllers/catalog-controller";
 import { ReviewController } from '../controllers/review-controller';
+import { ReviewController } from '../controllers/review-controller';
 
 export const publicRouter = express.Router();
 
