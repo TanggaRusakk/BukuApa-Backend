@@ -4,6 +4,7 @@ export interface UserJWTPayload {
     id: number
     name: string
     email: string
+    role: string
 }
 
 export interface RegisterUserRequest {
@@ -24,7 +25,8 @@ export interface UserResponse {
 export function toUserResponse(
     id: number,
     name: string,
-    email: string
+    email: string,
+    role: string
 ): UserResponse {
     return {
         token: generateToken(
@@ -32,6 +34,7 @@ export function toUserResponse(
                 id: id,
                 name: name,
                 email: email,
+                role: role,
             },
             "1h"
         ),

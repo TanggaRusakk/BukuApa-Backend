@@ -37,7 +37,7 @@ export class UserService {
             },
         })
 
-        return toUserResponse(user.id, user.name, user.email)
+        return toUserResponse(user.id, user.name, user.email, user.role)
     }
 
     static async login(request: LoginUserRequest): Promise<UserResponse> {
@@ -62,6 +62,6 @@ export class UserService {
             throw new ResponseError(400, "Invalid email or password!")
         }
 
-        return toUserResponse(user.id, user.name, user.email)
+        return toUserResponse(user.id, user.name, user.email, user.role)
     }
-}
+}   
