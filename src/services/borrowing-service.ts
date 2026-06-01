@@ -1,22 +1,23 @@
 import { prismaClient } from "../utils/database-util";
 import { ResponseError } from "../errors/response-error";
+import { CreateBorrowingRequest, BorrowingResponse, toBorrowingResponse } from "../models/borrowing-model";
+import { BorrowingValidation } from "../validations/borrowing-validation";
 
 export class BorrowingService {
-  static async create(user: any, request: { bookId: number }) {
-    // 1. Cek ketersediaan buku
-    const book = await prismaClient.book.findUnique({ where: { id: request.bookId } });
+  static async create(user: any, request: CreateBorrowingRequest): Promise<BorrowingResponse> {
+    const borrowRequest = BorrowingValidation.CREATE.parse(request);
+
+    const book = await prismaClient.book.findUnique({ where: { id: borrowRequest.bookId } });
     if (!book) throw new ResponseError(404, "Book not found");
     if (book.stock <= 0) throw new ResponseError(400, "Book is out of stock");
 
-    // 2. Set tanggal tenggat waktu (7 hari dari sekarang)
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7);
 
-    // 3. Proses peminjaman (mengurangi stok dan mencatat transaksi)
     const result = await prismaClient.$transaction(async (prisma: any) => {
       const borrowing = await prisma.borrowing.create({
         data: {
-          userId: user.id, // Ambil ID user dari token login
+          userId: user.id,
           bookId: book.id,
           dueDate: dueDate,
           status: "BORROWED",
@@ -31,11 +32,10 @@ export class BorrowingService {
       return borrowing;
     });
 
-    return result;
+    return toBorrowingResponse(result);
   }
 
-  static async returnBook(user: any, loanId: number) {
-    // 1. Cek data peminjaman
+  static async returnBook(user: any, loanId: number): Promise<BorrowingResponse> {
     const borrowing = await prismaClient.borrowing.findFirst({
       where: { id: loanId, userId: user.id },
     });
@@ -43,7 +43,6 @@ export class BorrowingService {
     if (!borrowing) throw new ResponseError(404, "Borrowing record not found");
     if (borrowing.status !== "BORROWED") throw new ResponseError(400, "Book has already been returned or overdue");
 
-    // 2. Proses pengembalian (menambah stok dan ubah status)
     const result = await prismaClient.$transaction(async (prisma: any) => {
       const updatedBorrowing = await prisma.borrowing.update({
         where: { id: loanId },
@@ -61,6 +60,6 @@ export class BorrowingService {
       return updatedBorrowing;
     });
 
-    return result;
+    return toBorrowingResponse(result);
   }
 }

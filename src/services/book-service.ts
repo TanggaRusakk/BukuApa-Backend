@@ -5,9 +5,7 @@ import { Validation } from "../validations/validation";
 import { BookResponse, CreateBookRequest, UpdateBookRequest, toBookResponse } from "../models/book-model";
 
 export class BookService {
-    /**
-     * Menambahkan data buku baru ke dalam sistem katalog perpustakaan.
-     */
+    // Menambahkan data buku baru ke dalam sistem katalog perpustakaan.
     static async create(request: CreateBookRequest): Promise<BookResponse> {
         const bookRequest = Validation.validate(BookValidation.CREATE, request);
 
@@ -26,9 +24,7 @@ export class BookService {
         return toBookResponse(book);
     }
 
-    /**
-     * Memperbarui informasi buku yang sudah terdaftar berdasarkan ID.
-     */
+    // Memperbarui informasi buku yang sudah terdaftar berdasarkan ID.
     static async update(request: UpdateBookRequest): Promise<BookResponse> {
         const bookRequest = Validation.validate(BookValidation.UPDATE, request);
 
@@ -48,9 +44,7 @@ export class BookService {
         return toBookResponse(updatedBook);
     }
 
-    /**
-     * Menghapus rekaman data buku secara permanen dari sistem inventaris.
-     */
+    // Menghapus rekaman data buku secara permanen dari sistem inventaris.
     static async delete(bookId: number): Promise<{ message: string }> {
         const bookExists = await prismaClient.book.findUnique({
             where: { id: bookId }
@@ -67,9 +61,7 @@ export class BookService {
         return { message: "Buku berhasil dihapus dari katalog" };
     }
 
-    /**
-     * Mengambil detail informasi lengkap satu buku tertentu.
-     */
+    //Mengambil detail informasi lengkap satu buku tertentu.
     static async get(bookId: number): Promise<BookResponse> {
         const book = await prismaClient.book.findUnique({
             where: { id: bookId }

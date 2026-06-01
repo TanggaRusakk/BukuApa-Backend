@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { BorrowingService } from "../services/borrowing-service";
 
-// Menambahkan interface untuk membaca data user dari middleware buatan Angga
 export interface UserRequest extends Request {
   user?: any;
 }
