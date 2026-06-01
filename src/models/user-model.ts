@@ -22,6 +22,15 @@ export interface UserResponse {
     token?: string
 }
 
+export interface GetUserResponse {
+    id: number
+    name: string
+    email: string
+    role: string
+    createdAt: Date
+    updatedAt: Date
+}
+
 export function toUserResponse(
     id: number,
     name: string,

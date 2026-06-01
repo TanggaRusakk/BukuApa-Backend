@@ -1,8 +1,10 @@
 import { ResponseError } from "../errors/response-error"
 import {
+    GetUserResponse,
     LoginUserRequest,
     RegisterUserRequest,
     toUserResponse,
+    UserJWTPayload,
     UserResponse,
 } from "../models/user-model"
 import { prismaClient } from "../utils/database-util"
@@ -63,5 +65,27 @@ export class UserService {
         }
 
         return toUserResponse(user.id, user.name, user.email, user.role)
+    }
+
+    static async get(userPayload: UserJWTPayload): Promise<GetUserResponse> {
+        const user = await prismaClient.user.findFirst({
+            where: {
+                id: userPayload.id,
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        })
+
+        if (!user) {
+            throw new ResponseError(404, "User not found!")
+        }
+
+        return user
     }
 }   

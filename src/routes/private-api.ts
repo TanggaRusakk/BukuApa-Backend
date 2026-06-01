@@ -3,12 +3,15 @@ import { authMiddleware } from "../middlewares/auth-middleware";
 import { BorrowingController } from "../controllers/borrowing-controller";
 import { BookController } from "../controllers/book-controller";
 import { ReviewController } from "../controllers/review-controller";
+import { UserController } from "../controllers/user-controller";
 
 export const privateRouter = express.Router();
 
 // Middleware Autentikasi (Agar harus login dulu)
 privateRouter.use(authMiddleware);
 
+// Route User
+privateRouter.get("/users/me", UserController.get);
 // Route Borrowing (JC)
 privateRouter.post("/borrowings", BorrowingController.create);
 privateRouter.patch("/borrowings/:loanId/return", BorrowingController.returnBook);
