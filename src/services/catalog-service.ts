@@ -8,6 +8,7 @@ export class CatalogService {
         title: request.title ? { contains: request.title, mode: "insensitive" } : undefined,
         author: request.author ? { contains: request.author, mode: "insensitive" } : undefined,
       },
+      include: { categories: true }
     });
     
     return books.map(toBookResponse);

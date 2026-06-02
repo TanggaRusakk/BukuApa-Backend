@@ -17,8 +17,28 @@ export class BookService {
             throw new ResponseError(400, "Buku dengan ISBN ini sudah terdaftar");
         }
 
+        // Validasi bahwa semua categoryIds yang dikirim memang ada di database
+        if (bookRequest.categoryIds && bookRequest.categoryIds.length > 0) {
+            const existingCategories = await prismaClient.category.findMany({
+                where: { id: { in: bookRequest.categoryIds } },
+                select: { id: true }
+            });
+
+            if (existingCategories.length !== bookRequest.categoryIds.length) {
+                throw new ResponseError(400, "Satu atau lebih kategori tidak ditemukan");
+            }
+        }
+
+        const { categoryIds, ...bookData } = bookRequest;
+
         const book = await prismaClient.book.create({
-            data: bookRequest
+            data: {
+                ...bookData,
+                categories: categoryIds && categoryIds.length > 0
+                    ? { connect: categoryIds.map(id => ({ id })) }
+                    : undefined
+            },
+            include: { categories: true }
         });
 
         return toBookResponse(book);
@@ -36,9 +56,30 @@ export class BookService {
             throw new ResponseError(404, "Buku tidak ditemukan");
         }
 
+        // Validasi bahwa semua categoryIds yang dikirim memang ada di database
+        if (bookRequest.categoryIds && bookRequest.categoryIds.length > 0) {
+            const existingCategories = await prismaClient.category.findMany({
+                where: { id: { in: bookRequest.categoryIds } },
+                select: { id: true }
+            });
+
+            if (existingCategories.length !== bookRequest.categoryIds.length) {
+                throw new ResponseError(400, "Satu atau lebih kategori tidak ditemukan");
+            }
+        }
+
+        const { categoryIds, id, ...bookData } = bookRequest;
+
         const updatedBook = await prismaClient.book.update({
-            where: { id: bookRequest.id },
-            data: bookRequest
+            where: { id },
+            data: {
+                ...bookData,
+                // Menggunakan 'set' agar kategori lama di-replace dengan yang baru
+                categories: categoryIds !== undefined
+                    ? { set: categoryIds.map(catId => ({ id: catId })) }
+                    : undefined
+            },
+            include: { categories: true }
         });
 
         return toBookResponse(updatedBook);
@@ -64,7 +105,8 @@ export class BookService {
     //Mengambil detail informasi lengkap satu buku tertentu.
     static async get(bookId: number): Promise<BookResponse> {
         const book = await prismaClient.book.findUnique({
-            where: { id: bookId }
+            where: { id: bookId },
+            include: { categories: true }
         });
 
         if (!book) {

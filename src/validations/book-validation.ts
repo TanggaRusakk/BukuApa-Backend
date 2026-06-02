@@ -8,7 +8,8 @@ export class BookValidation {
         publisher: z.string().min(1, "Nama penerbit tidak boleh kosong"),
         publishedYear: z.number().int().min(1800).max(new Date().getFullYear(), "Tahun terbit tidak valid"),
         totalPages: z.number().int().positive("Jumlah halaman harus lebih dari 0"),
-        stock: z.number().int().nonnegative("Stok minimal bernilai 0")
+        stock: z.number().int().nonnegative("Stok minimal bernilai 0"),
+        categoryIds: z.array(z.number().int().positive("ID kategori tidak valid")).optional()
     });
 
     static readonly UPDATE = z.object({
@@ -19,6 +20,7 @@ export class BookValidation {
         publisher: z.string().min(1).optional(),
         publishedYear: z.number().int().min(1800).max(new Date().getFullYear()).optional(),
         totalPages: z.number().int().positive().optional(),
-        stock: z.number().int().nonnegative().optional()
+        stock: z.number().int().nonnegative().optional(),
+        categoryIds: z.array(z.number().int().positive("ID kategori tidak valid")).optional()
     });
 }
