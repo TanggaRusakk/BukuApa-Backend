@@ -9,8 +9,14 @@ export const errorMiddleware = async (
     next: NextFunction
 ) => {
     if (error instanceof ZodError) {
+        const formattedErrors = error.issues.map((issue) => ({
+            field: issue.path.join("."),
+            message: issue.message,
+        }));
+
         res.status(400).json({
-            errors: `Validation error: ${JSON.stringify(error.message)}`,
+            errors: "Validation error",
+            details: formattedErrors,
         })
     } else if (error instanceof ResponseError) {
         res.status(error.status).json({

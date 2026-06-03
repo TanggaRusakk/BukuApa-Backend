@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { BookService } from "../services/book-service";
+import { validateIdParam } from "../validations/param-validation";
 
 export class BookController {
     static async create(req: Request, res: Response, next: NextFunction) {
@@ -13,8 +14,7 @@ export class BookController {
 
     static async update(req: Request, res: Response, next: NextFunction) {
         try {
-            // Konversi dari string ke number
-            const bookId = Number(req.params.bookId); 
+            const bookId = validateIdParam(req.params.bookId, "Book ID");
             const request = { ...req.body, id: bookId };
             const result = await BookService.update(request);
             res.status(200).json({ data: result });
@@ -25,8 +25,7 @@ export class BookController {
 
     static async delete(req: Request, res: Response, next: NextFunction) {
         try {
-            // Konversi dari string ke number
-            const bookId = Number(req.params.bookId);
+            const bookId = validateIdParam(req.params.bookId, "Book ID");
             const result = await BookService.delete(bookId);
             res.status(200).json({ data: result });
         } catch (e) {
@@ -36,8 +35,7 @@ export class BookController {
 
     static async get(req: Request, res: Response, next: NextFunction) {
         try {
-            // Konversi dari string ke number
-            const bookId = Number(req.params.bookId);
+            const bookId = validateIdParam(req.params.bookId, "Book ID");
             const result = await BookService.get(bookId);
             res.status(200).json({ data: result });
         } catch (e) {

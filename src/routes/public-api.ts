@@ -17,5 +17,4 @@ publicRouter.get("/books", CatalogController.search);
 publicRouter.get("/categories", CategoryController.getAll);
 
 // Route Review (Jeferey)
-publicRouter.post("/books/:bookId/reviews", ReviewController.create);
 publicRouter.get("/books/:bookId/reviews", ReviewController.getReviews);
