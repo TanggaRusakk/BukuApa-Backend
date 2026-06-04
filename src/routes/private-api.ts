@@ -12,6 +12,7 @@ privateRouter.use(authMiddleware);
 // Route Borrowing (JC)
 privateRouter.post("/borrowings", BorrowingController.create);
 privateRouter.patch("/borrowings/:loanId/return", BorrowingController.returnBook);
+privateRouter.get("/borrowings", BorrowingController.list);
 
 // Route Books (Angga)
 privateRouter.post("/books", BookController.create);
