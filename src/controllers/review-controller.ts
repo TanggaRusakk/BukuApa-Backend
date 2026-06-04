@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { UserRequest } from "../models/user-request-model";
 import { ReviewService } from "../services/review-service";
 import { CreateReviewRequest, UpdateReviewRequest } from "../models/review-model";
+import { validateIdParam, validatePaginationQuery } from "../validations/param-validation";
 
 export class ReviewController {
     /**
@@ -10,9 +11,11 @@ export class ReviewController {
     */
     static async getReviews(req: Request, res: Response, next: NextFunction) {
         try {
-        const bookId = Number(req.params.bookId);
-        const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 20;
+        const bookId = validateIdParam(req.params.bookId, "Book ID");
+        const { page, limit } = validatePaginationQuery(
+            req.query.page as string | undefined,
+            req.query.limit as string | undefined
+        );
 
         const result = await ReviewService.getByBookId(bookId, page, limit);
 
@@ -53,7 +56,7 @@ export class ReviewController {
             throw new Error("User ID not found in request");
         }
 
-        const reviewId = Number(req.params.reviewId);
+        const reviewId = validateIdParam(req.params.reviewId, "Review ID");
         const request: UpdateReviewRequest = req.body;
 
         const result = await ReviewService.update(userId, reviewId, request);
@@ -75,7 +78,7 @@ export class ReviewController {
             throw new Error("User ID not found in request");
         }
 
-        const reviewId = Number(req.params.reviewId);
+        const reviewId = validateIdParam(req.params.reviewId, "Review ID");
         const result = await ReviewService.delete(userId, reviewId);
 
         res.status(200).json({ data: result });
@@ -91,7 +94,7 @@ export class ReviewController {
     static async canReview(req: UserRequest, res: Response, next: NextFunction) {
         try {
         const userId = req.user?.id;
-        const bookId = Number(req.params.bookId);
+        const bookId = validateIdParam(req.params.bookId, "Book ID");
 
         if (!userId) {
             throw new Error("User ID not found in request");

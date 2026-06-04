@@ -18,21 +18,21 @@ export class BookValidation {
             .trim()
             .min(1, "Nama penerbit tidak boleh kosong")
             .max(255, "Nama penerbit maksimal 255 karakter"),
-        publishedYear: z.number({
+        publishedYear: z.coerce.number({
             error: "Tahun terbit harus berupa angka"
         }).int("Tahun terbit harus bilangan bulat")
             .min(1800, "Tahun terbit minimal 1800")
             .max(new Date().getFullYear(), "Tahun terbit tidak valid"),
-        totalPages: z.number({
+        totalPages: z.coerce.number({
             error: "Jumlah halaman harus berupa angka"
         }).int("Jumlah halaman harus bilangan bulat")
             .positive("Jumlah halaman harus lebih dari 0"),
-        stock: z.number({
+        stock: z.coerce.number({
             error: "Jumlah stok harus berupa angka"
         }).int("Jumlah stok harus bilangan bulat")
             .nonnegative("Stok minimal bernilai 0"),
         categoryIds: z.array(
-            z.number({
+            z.coerce.number({
                 error: "ID kategori harus berupa angka"
             }).int("ID kategori harus bilangan bulat")
                 .positive("ID kategori tidak valid")
@@ -40,7 +40,7 @@ export class BookValidation {
     });
 
     static readonly UPDATE = z.object({
-        id: z.number({
+        id: z.coerce.number({
             error: "ID buku harus berupa angka"
         }).int("ID buku harus bilangan bulat")
             .positive("ID buku tidak valid"),
@@ -64,24 +64,24 @@ export class BookValidation {
             .min(1, "Nama penerbit tidak boleh kosong")
             .max(255, "Nama penerbit maksimal 255 karakter")
             .optional(),
-        publishedYear: z.number({
+        publishedYear: z.coerce.number({
             error: "Tahun terbit harus berupa angka"
         }).int("Tahun terbit harus bilangan bulat")
             .min(1800, "Tahun terbit minimal 1800")
             .max(new Date().getFullYear(), "Tahun terbit tidak valid")
             .optional(),
-        totalPages: z.number({
+        totalPages: z.coerce.number({
             error: "Jumlah halaman harus berupa angka"
         }).int("Jumlah halaman harus bilangan bulat")
             .positive("Jumlah halaman harus lebih dari 0")
             .optional(),
-        stock: z.number({
+        stock: z.coerce.number({
             error: "Jumlah stok harus berupa angka"
         }).int("Jumlah stok harus bilangan bulat")
             .nonnegative("Stok minimal bernilai 0")
             .optional(),
         categoryIds: z.array(
-            z.number({
+            z.coerce.number({
                 error: "ID kategori harus berupa angka"
             }).int("ID kategori harus bilangan bulat")
                 .positive("ID kategori tidak valid")
