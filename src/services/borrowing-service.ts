@@ -75,9 +75,12 @@ export class BorrowingService {
 
     return toBorrowingResponse(result);
   }
-
   static async list(user: any): Promise<BorrowingResponse[]> {
-    const queryFilter = user.role === "STAFF" ? {} : { userId: user.id };
+    // Memaksa konversi ke Number buat jaga-jaga kalau token JWT ngirimnya String
+    const authUserId = Number(user.id || user.userId);
+    
+    // Filter: Staff liat semua, User cuma liat ID-nya sendiri
+    const queryFilter = user.role === "STAFF" ? {} : { userId: authUserId };
 
     const borrowings = await prismaClient.borrowing.findMany({
       where: queryFilter,
