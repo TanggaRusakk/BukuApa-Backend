@@ -95,8 +95,23 @@ export class BookService {
             throw new ResponseError(404, "Buku tidak ditemukan");
         }
 
-        await prismaClient.book.delete({
-            where: { id: bookId }
+        // FIX: Hapus manual secara berurutan (PENGGANTI ON DELETE CASCADE di Schema Prisma)
+        // Kita pakai $transaction biar kalau ada gagal di tengah jalan, datanya ke-rollback aman
+        await prismaClient.$transaction(async (prisma: any) => {
+            // 1. Bersihin data peminjaman yang nyangkut sama buku ini
+            await prisma.borrowing.deleteMany({ 
+                where: { bookId: bookId } 
+            });
+            
+            // 2. Bersihin data review yang nyangkut sama buku ini
+            await prisma.review.deleteMany({ 
+                where: { bookId: bookId } 
+            });
+            
+            // 3. Eksekusi mati bukunya dengan tenang
+            await prisma.book.delete({ 
+                where: { id: bookId } 
+            });
         });
 
         return { message: "Buku berhasil dihapus dari katalog" };

@@ -16,6 +16,7 @@ privateRouter.get("/users/me", UserController.get);
 privateRouter.post("/borrowings", BorrowingController.create);
 privateRouter.patch("/borrowings/:loanId/return", BorrowingController.returnBook);
 privateRouter.get("/borrowings", BorrowingController.list);
+privateRouter.post("/borrowings/:loanId/extend", BorrowingController.extend);
 
 // Route Books (Angga)
 privateRouter.post("/books", BookController.create);

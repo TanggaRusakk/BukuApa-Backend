@@ -43,4 +43,15 @@ export class BorrowingController {
             next(e);
         }
     }
+
+    static async extend(req: UserRequest, res: Response, next: NextFunction) {
+        try {
+            const loanId = Number(req.params.loanId);
+            const response = await BorrowingService.extend(req.user!, loanId);
+            
+            res.status(200).json({ data: response });
+        } catch (e) {
+            next(e);
+        }
+    }
 }
