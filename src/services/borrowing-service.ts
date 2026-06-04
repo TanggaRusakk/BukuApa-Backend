@@ -75,6 +75,42 @@ export class BorrowingService {
 
     return toBorrowingResponse(result);
   }
+
+  static async extend(user: any, loanId: number): Promise<BorrowingResponse> {
+    const queryFilter = user.role === "STAFF" ? { id: loanId } : { id: loanId, userId: user.id };
+
+    const borrowing = await prismaClient.borrowing.findFirst({
+      where: queryFilter,
+      include: { book: true, user: true }
+    });
+
+    if (!borrowing) throw new ResponseError(404, "Data peminjaman tidak ditemukan");
+    if (borrowing.status !== "BORROWED") throw new ResponseError(400, "Buku sudah dikembalikan atau terlambat");
+
+    // Hitung jatah perpanjangan dari selisih tanggal
+    const bDate = new Date(borrowing.borrowDate);
+    const currDueDate = new Date(borrowing.dueDate);
+    const diffDays = Math.round(Math.abs(currDueDate.getTime() - bDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    let extCount = 0;
+    if (diffDays >= 20) extCount = 2;
+    else if (diffDays >= 13) extCount = 1;
+
+    if (extCount >= 2) throw new ResponseError(400, "Jatah perpanjangan maksimal 2 kali sudah habis");
+
+    // Tambah 7 hari
+    const newDueDate = new Date(borrowing.dueDate);
+    newDueDate.setDate(newDueDate.getDate() + 7);
+
+    const result = await prismaClient.borrowing.update({
+      where: { id: loanId },
+      data: { dueDate: newDueDate },
+      include: { book: true, user: true }
+    });
+
+    return toBorrowingResponse(result);
+  }
+  
   static async list(user: any): Promise<BorrowingResponse[]> {
     // Memaksa konversi ke Number buat jaga-jaga kalau token JWT ngirimnya String
     const authUserId = Number(user.id || user.userId);
