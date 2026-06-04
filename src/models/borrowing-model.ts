@@ -2,6 +2,7 @@ import { Borrowing } from "../generated/prisma/client";
 
 export type CreateBorrowingRequest = {
     bookId: number;
+    userId?: number;
 }
 
 export type BorrowingResponse = {

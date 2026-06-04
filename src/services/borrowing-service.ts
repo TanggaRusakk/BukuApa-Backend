@@ -90,6 +90,6 @@ export class BorrowingService {
       }
     });
 
-    return borrowings.map((borrowing) => toBorrowingResponse(borrowing));
+    return borrowings.map((borrowing: any) => toBorrowingResponse(borrowing));
   }
 }
