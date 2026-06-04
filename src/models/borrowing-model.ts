@@ -15,9 +15,11 @@ export type BorrowingResponse = {
     status: string;
     createdAt: Date;
     updatedAt: Date;
+    book?: any;
+    user?: any;
 }
 
-export function toBorrowingResponse(borrowing: Borrowing): BorrowingResponse {
+export function toBorrowingResponse(borrowing: any): BorrowingResponse {
     return {
         id: borrowing.id,
         userId: borrowing.userId,
@@ -28,5 +30,7 @@ export function toBorrowingResponse(borrowing: Borrowing): BorrowingResponse {
         status: borrowing.status,
         createdAt: borrowing.createdAt,
         updatedAt: borrowing.updatedAt,
+        book: borrowing.book,
+        user: borrowing.user
     }
 }
